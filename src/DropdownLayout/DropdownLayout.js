@@ -37,23 +37,17 @@ class DropdownLayout extends WixComponent {
         has(option, 'value') && (React.isValidElement(option.value) || (isstring(option.value) && trim(option.value).length > 0));
   }
 
-  onClickOutside() {
+  onClickOutside(event) {
     const {visible, onClickOutside} = this.props;
     if (visible && onClickOutside) {
-      onClickOutside();
+      onClickOutside(event);
     }
   }
 
   _onSelect(index) {
     const {options, onSelect, selectedId} = this.props;
-    if (index >= 0 && index < options.length) {
-      const newSelectedId = options[index].id;
-      if (newSelectedId !== selectedId && onSelect) {
-        onSelect(options[index]);
-        return true;
-      }
-    }
-    return false;
+    options[index] && onSelect && onSelect(options[index], options[index].id === selectedId);
+    return !!onSelect && options[index];
   }
 
   _onMouseEnter(index) {
@@ -81,7 +75,8 @@ class DropdownLayout extends WixComponent {
     } while (!this.isSelectableOption(options[newHovered]));
 
     this.setState({hovered: newHovered});
-    this.options.scrollTop = (newHovered - 2) * parseInt(styles.option_height);
+    console.log((newHovered - 2) * 35);
+    this.options.scrollTop = (newHovered - 2) * 35;
   }
 
   _onKeyDown(event) {
@@ -152,9 +147,9 @@ class DropdownLayout extends WixComponent {
 
     return (
       <div tabIndex={tabIndex} className={classNames(styles.wrapper, styles[`theme-${this.props.theme}`])} onKeyDown={this._onKeyDown}>
-        <div className={contentContainerClassName}>
+        <div className={contentContainerClassName} style={{maxHeight: this.props.maxHeightPixels + 'px'}}>
           {this.renderNode(fixedHeader)}
-          <div className={styles.options} ref={options => this.options = options} data-hook="dropdown-layout-options">
+          <div className={styles.options} style={{maxHeight: this.props.maxHeightPixels - 35 + 'px'}} ref={options => this.options = options} data-hook="dropdown-layout-options">
             {options.map((option, idx) => (
               option.value === '-' ?
                 (this.renderDivider(idx)) :
@@ -248,13 +243,15 @@ DropdownLayout.propTypes = {
   theme: React.PropTypes.string,
   onClickOutside: React.PropTypes.func,
   fixedHeader: React.PropTypes.node,
-  fixedFooter: React.PropTypes.node
+  fixedFooter: React.PropTypes.node,
+  maxHeightPixels: React.PropTypes.number
 };
 
 DropdownLayout.defaultProps = {
   options: [],
   tabIndex: 1,
-  selectedId: NOT_HOVERED_INDEX
+  selectedId: NOT_HOVERED_INDEX,
+  maxHeightPixels: 260
 };
 
 DropdownLayout.NONE_SELECTED_ID = NOT_HOVERED_INDEX;

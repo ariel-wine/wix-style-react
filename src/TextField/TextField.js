@@ -1,29 +1,19 @@
-import React, {Children} from 'react';
-import {first, last} from 'lodash/fp';
-
+import React from 'react';
 import {children, optional, once} from '../Composite';
 import Label from '../Label';
 import Input from '../Input';
+import InputAreaWithLabelComposite from '../Composite/InputAreaWithLabelComposite/InputAreaWithLabelComposite';
 
-import styles from './TextField.scss';
+const TextField = ({...props, children}) => (
+  <InputAreaWithLabelComposite {...props}>
+    {children}
+  </InputAreaWithLabelComposite>
+);
 
-export default function TextField(props) {
-  const children = Children.toArray(props.children);
-  return (
-    <div data-hook={props.dataHook}>
-      { children.length === 2 ?
-        <div className={styles.textFieldLabel}>
-          {first(children)}
-        </div> : null
-      }
-      { last(children) }
-    </div>
-  );
-}
+TextField.propTypes = {
+  children: children(optional(Label), once(Input))
+};
 
 TextField.displayName = 'TextField';
 
-TextField.propTypes = {
-  dataHook: React.PropTypes.string,
-  children: children(optional(Label), once(Input))
-};
+export default TextField;

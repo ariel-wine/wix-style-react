@@ -37,7 +37,7 @@ class Input extends Component {
   render() {
     const {
       id,
-      style,
+      theme,
       value,
       forceHover,
       forceFocus,
@@ -55,24 +55,13 @@ class Input extends Component {
       readOnly,
       size,
       dataHook,
-      iconLeft,
       prefix,
       suffix,
       disabled,
       type,
-      errorMessage
+      errorMessage,
+      roundInput
     } = this.props;
-
-    let {theme} = this.props; // When deprecation ends. theme should move to const.
-
-    if (style) {
-      console.warn(deprecated('Jan 1st 2017', 'style', 'theme'));
-      theme = style;
-    }
-
-    if (iconLeft) {
-      console.warn(deprecated('Jan 19th 2017', 'iconLeft', 'prefix'));
-    }
 
     const classes = classNames({
       [styles.root]: true,
@@ -82,7 +71,8 @@ class Input extends Component {
       [styles.disabled]: disabled,
       [styles.hasError]: !!error,
       [styles.hasHover]: forceHover,
-      [styles.hasFocus]: forceFocus || this.state.focus
+      [styles.hasFocus]: forceFocus || this.state.focus,
+      [styles.roundInput]: roundInput
     });
 
     const myAttr = {'data-hook': dataHook};
@@ -92,7 +82,6 @@ class Input extends Component {
         <InputPrefix
           disabled={disabled}
           >
-          {iconLeft}
           {prefix}
         </InputPrefix>
         <input
@@ -186,13 +175,13 @@ Input.displayName = 'Input';
 Input.defaultProps = {
   theme: 'normal',
   size: 'normal',
-  errorMessage: ''
+  errorMessage: '',
+  roundInput: false
 };
 
 Input.propTypes = {
   id: PropTypes.string,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  style: PropTypes.oneOf(['normal', 'paneltitle', 'material']),
   theme: PropTypes.oneOf(['normal', 'paneltitle', 'material']),
   forceHover: PropTypes.bool,
   forceFocus: PropTypes.bool,
@@ -215,22 +204,14 @@ Input.propTypes = {
   onKeyDown: PropTypes.func,
   onKeyUp: PropTypes.func,
   disabled: PropTypes.bool,
-  iconLeft: PropTypes.object,
   readOnly: PropTypes.bool,
   dataHook: PropTypes.string,
   size: PropTypes.oneOf(['small', 'normal', 'large']),
   prefix: PropTypes.node,
   suffix: PropTypes.node,
   type: PropTypes.node,
-  errorMessage: PropTypes.string
+  errorMessage: PropTypes.string,
+  roundInput: PropTypes.bool
 };
-
-function deprecated(when, oldProp, newProp) {
-  return [
-    '[wix-style-react>Input] Warning.',
-    `Property '${oldProp}' has been deprecated, and will be removed ${when}.`,
-    `Please use '${newProp}' instead.`
-  ].join(' ');
-}
 
 export default Input;

@@ -61,7 +61,8 @@ class DataTable extends WixCopmonent {
         pageStart={0}
         loadMore={this.loadMore}
         hasMore={this.state.currentPage < this.state.lastPage || (this.props.hasMore)}
-        loader={<div className="loader">Loading ...</div>}
+        loader={this.props.loader}
+        useWindow={this.props.useWindow}
         >
         {table}
       </InfiniteScroll>
@@ -146,6 +147,17 @@ class DataTable extends WixCopmonent {
   }
 }
 
+function validateData(props, propName) {
+  if (props[propName]) {
+    if (props[propName].constructor && props[propName].constructor.name && props[propName].constructor.name.toLowerCase().indexOf('array') > -1) {
+      return null;
+    } else {
+      return Error('Data element must be an array type');
+    }
+  }
+  return null;
+}
+
 DataTable.defaultProps = {
   data: [],
   columns: [],
@@ -154,12 +166,14 @@ DataTable.defaultProps = {
   itemsPerPage: 20,
   width: '100%',
   loadMore: null,
-  hasMore: false
+  hasMore: false,
+  loader: <div className="loader">Loading ...</div>,
+  useWindow: true
 };
 
 DataTable.propTypes = {
   id: PropTypes.string,
-  data: PropTypes.array,
+  data: validateData,
   columns: PropTypes.arrayOf(PropTypes.shape({
     title: PropTypes.string.isRequired,
     render: PropTypes.func.isRequired
@@ -173,7 +187,9 @@ DataTable.propTypes = {
   itemsPerPage: PropTypes.number,
   width: PropTypes.string,
   loadMore: PropTypes.func,
-  hasMore: PropTypes.bool
+  hasMore: PropTypes.bool,
+  loader: PropTypes.node,
+  useWindow: PropTypes.bool
 };
 
 DataTable.displayName = 'DataTable';
