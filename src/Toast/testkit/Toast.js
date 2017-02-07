@@ -27,7 +27,7 @@ const toastDriverFactory = ({component}) => {
     hasTheme: theme => $component.hasClass(theme),
     toastExists: () => $component.parent().find(byDataHook('toast')).length > 0,
     getTopProperty: () => styleStringToObj($component.attr('style')).top,
-    hasLocation: location => $component.attr('class').indexOf(location) >= 0
+    hasLocation: location => $component.get(0).classList.contains(location)
   };
 };
 
